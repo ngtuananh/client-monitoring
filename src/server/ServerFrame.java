@@ -7,6 +7,7 @@ import java.awt.Container;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,6 +32,10 @@ public class ServerFrame extends JFrame {
 	private JTextField timeTfd;
 	private DefaultTableModel dfModel;
 	private JTable table;
+	private JLabel ipLb;
+	private JLabel portLb;
+	private JButton startServerBtn;
+	private JButton closeServerBtn;
 	
 	public ServerFrame() {
 		super("Server");
@@ -40,7 +45,45 @@ public class ServerFrame extends JFrame {
 	public void initComponents() {
 		Container contentPane = this.getContentPane();
 		contentPane.setLayout(new BorderLayout());
+		
+		// top panel
+		JPanel pTop = new JPanel();
+		pTop.setLayout(new BorderLayout());
+		
+		JPanel pTop1 = new JPanel();
+		pTop1.add(ipLb = new JLabel("Server IP"));
+		pTop1.add(portLb = new JLabel("Server port"));
+		
+		JPanel pTop2 = new JPanel();
+		Box bTop1 = Box.createHorizontalBox();
+		Box bTop2 = Box.createHorizontalBox();
+		Box bTop3 = Box.createHorizontalBox();
+		Box bTop4 = Box.createHorizontalBox();
+		
+		bTop1.add(new JLabel("Search: "));
+		searchClientIPTfd = new JTextField(10);
+		bTop1.add(searchClientIPTfd);
 
+		bTop2.add(new JLabel("Action: "));
+		actionCbb = new JComboBox<Object>();
+		bTop2.add(actionCbb);
+		
+		bTop3.add(new JLabel("Date: "));
+		dateTfd = new JTextField(10);
+		bTop3.add(dateTfd);
+
+		bTop4.add(new JLabel("Time: "));
+		timeTfd = new JTextField(10);
+		bTop4.add(timeTfd);
+		
+		pTop2.add(bTop1);
+		pTop2.add(bTop2);
+		pTop2.add(bTop3);
+		pTop2.add(bTop4);
+		
+		pTop.add(pTop1, BorderLayout.NORTH);
+		pTop.add(pTop2, BorderLayout.SOUTH);
+		
 		// left panel
 		JPanel pLeft = new JPanel();
 		
@@ -79,46 +122,26 @@ public class ServerFrame extends JFrame {
 		box.add(scroller1);
 		pLeft.add(box);
 		
-		JPanel pCen = new JPanel();
-		Box bCen = Box.createVerticalBox();
-		Box bCen1 = Box.createHorizontalBox();
-		Box bCen2 = Box.createHorizontalBox();
-		
-		bCen1.add(new JLabel("Search: "));
-		searchClientIPTfd = new JTextField(10);
-		bCen1.add(searchClientIPTfd);
-		bCen1.add(Box.createHorizontalStrut(20));
-		bCen1.add(new JLabel("Action: "));
-		actionCbb = new JComboBox<Object>();
-		bCen1.add(actionCbb);
-		
-		bCen2.add(new JLabel("Date: "));
-		dateTfd = new JTextField(10);
-		bCen2.add(dateTfd);
-		bCen2.add(Box.createHorizontalStrut(20));
-		bCen2.add(new JLabel("Time: "));
-		timeTfd = new JTextField(10);
-		bCen2.add(timeTfd);
-		
-		bCen.add(bCen1);
-		bCen.add(Box.createVerticalStrut(20));
-		bCen.add(bCen2);
-		bCen.add(Box.createVerticalStrut(20));
+		// Center panel
 		
 		String[] headers = {"STT", "Date", "Time", "Action", "IP client", "Description"};
-		bCen.add(new JScrollPane(table = new JTable(dfModel = new DefaultTableModel(headers, 0))));
+		JScrollPane scroll = new JScrollPane(table = new JTable(dfModel = new DefaultTableModel(headers, 0)));
 		
+		//bottom panel
+		JPanel pBottom = new JPanel();
+		pBottom.add(startServerBtn = new JButton("Start server"));
+		pBottom.add(closeServerBtn = new JButton("Close server"));
 		
-		pCen.add(bCen);
-		
+		contentPane.add(pTop, BorderLayout.NORTH);
 		contentPane.add(pLeft, BorderLayout.WEST);
-		contentPane.add(pCen, BorderLayout.CENTER);
+		contentPane.add(scroll, BorderLayout.CENTER);
+		contentPane.add(pBottom, BorderLayout.SOUTH);
 	}
 
 	private static void createAndShowGUI() {
 		// Create and set up the window.
 		ServerFrame sf = new ServerFrame();
-		sf.setSize(800, 600); 
+		sf.setSize(800, 620); 
 		sf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// Set up the content pane.
 		sf.initComponents();

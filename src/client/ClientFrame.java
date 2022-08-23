@@ -7,6 +7,7 @@ import java.awt.Container;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,6 +30,11 @@ public class ClientFrame extends JFrame {
 	private JTextField timeTfd;
 	private DefaultTableModel dfModel;
 	private JTable table;
+	private JTextField ipTfd;
+	private JTextField portTfd;
+	private JButton connectBtn;
+	private JButton stopBtn;
+	
 	
 	public ClientFrame() {
 		super("Client");
@@ -39,8 +45,27 @@ public class ClientFrame extends JFrame {
 		Container contentPane = this.getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		
-		JPanel pNorth = new JPanel();
-		//Box bCen = Box.createVerticalBox();
+		// top panel
+		JPanel pTop = new JPanel();
+		Box bTop1 = Box.createHorizontalBox();
+		Box bTop2 = Box.createHorizontalBox();
+		
+		bTop1.add(new JLabel("Server IP: "));
+		ipTfd = new JTextField(10);
+		bTop1.add(ipTfd);
+		
+		bTop2.add(new JLabel("Server port: "));
+		portTfd = new JTextField(10);
+		bTop2.add(portTfd);
+		
+		pTop.add(bTop1);
+		pTop.add(bTop2);
+		pTop.add(connectBtn = new JButton("Connect"));
+		pTop.add(stopBtn = new JButton("Stop"));
+		
+		// left panel
+		JPanel pLeft = new JPanel();
+		Box bCen = Box.createVerticalBox();
 		Box bCen1 = Box.createHorizontalBox();
 		Box bCen2 = Box.createHorizontalBox();
 		Box bCen3 = Box.createHorizontalBox();
@@ -57,21 +82,21 @@ public class ClientFrame extends JFrame {
 		timeTfd = new JTextField(10);
 		bCen3.add(timeTfd);
 		
-//		bCen.add(bCen1);
-//		bCen.add(Box.createVerticalStrut(5));
-//		bCen.add(bCen2);
-//		bCen.add(Box.createVerticalStrut(5));
-//		bCen.add(bCen3);
+		bCen.add(Box.createVerticalStrut(10));
+		bCen.add(bCen1);
+		bCen.add(Box.createVerticalStrut(10));
+		bCen.add(bCen2);
+		bCen.add(Box.createVerticalStrut(10));
+		bCen.add(bCen3);
 		
-		pNorth.add(bCen1);
-		pNorth.add(bCen2);
-		pNorth.add(bCen3);
+		pLeft.add(bCen);
 		
+		// center
 		String[] headers = {"STT", "Date", "Time", "Action", "Description"};
 		JScrollPane scroll = new JScrollPane(table = new JTable(dfModel = new DefaultTableModel(headers, 0)));
 		
-		
-		contentPane.add(pNorth, BorderLayout.NORTH);
+		contentPane.add(pTop, BorderLayout.NORTH);
+		contentPane.add(pLeft, BorderLayout.WEST);
 		contentPane.add(scroll, BorderLayout.CENTER);
 	}
 
