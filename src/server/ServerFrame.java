@@ -18,6 +18,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
 public class ServerFrame extends JFrame {
 
 	/**
@@ -32,13 +35,15 @@ public class ServerFrame extends JFrame {
 	private JTextField timeTfd;
 	private DefaultTableModel dfModel;
 	private JTable table;
-	private JLabel ipLb;
-	private JLabel portLb;
+	private JLabel serverInfo;
+	private JLabel serverState;
 	private JButton startServerBtn;
 	private JButton closeServerBtn;
+	private Server server;
 	
 	public ServerFrame() {
 		super("Server");
+		server = new Server();
 		initComponents();
 	}
 
@@ -51,8 +56,10 @@ public class ServerFrame extends JFrame {
 		pTop.setLayout(new BorderLayout());
 		
 		JPanel pTop1 = new JPanel();
-		pTop1.add(ipLb = new JLabel("Server IP"));
-		pTop1.add(portLb = new JLabel("Server port"));
+		String str = "Server address: " + server.getServerSocket().getInetAddress().getHostAddress()
+				+ " Server port: " + server.getServerSocket().getLocalPort();
+		pTop1.add(serverInfo = new JLabel(str));
+		pTop1.add(serverState = new JLabel());
 		
 		JPanel pTop2 = new JPanel();
 		Box bTop1 = Box.createHorizontalBox();
@@ -131,6 +138,33 @@ public class ServerFrame extends JFrame {
 		JPanel pBottom = new JPanel();
 		pBottom.add(startServerBtn = new JButton("Start server"));
 		pBottom.add(closeServerBtn = new JButton("Close server"));
+		closeServerBtn.setEnabled(false);
+		
+		//handle event
+		this.startServerBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				serverState.setText("Server is running...");
+				server.startServer();
+				startServerBtn.setEnabled(false);
+				closeServerBtn.setEnabled(true);
+			}
+			
+		});
+		
+		this.closeServerBtn.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				server.stopServer();
+				serverState.setText("Server is closed");
+				closeServerBtn.setEnabled(false);
+			}
+			
+		});
 		
 		contentPane.add(pTop, BorderLayout.NORTH);
 		contentPane.add(pLeft, BorderLayout.WEST);

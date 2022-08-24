@@ -1,16 +1,23 @@
 package server;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
 	private ServerSocket serverSocket = null;
-	private int port;
+	private int port = 12345;
 	private Socket clientSocket = null;
+	private BufferedReader input;
+	private BufferedWriter output;
 	private String pathDir;
+	private List<Socket> clientList;
 	
 	public static void main(String[] args) {
 		new Server().startServer();
@@ -18,7 +25,20 @@ public class Server {
 	
 	public Server() {
 		super();
+		try {
+			serverSocket = new ServerSocket(port, 0, InetAddress.getByName(null));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	public ServerSocket getServerSocket() {
+		return serverSocket;
+	}
+
+	public void setServerSocket(ServerSocket serverSocket) {
+		this.serverSocket = serverSocket;
 	}
 
 	public void startServer() {
@@ -28,11 +48,11 @@ public class Server {
 			@Override
 			public void run() {
 				try {
-					serverSocket = new ServerSocket(port);
+					
 					System.out.println("Waiting for clients to connect...");
 					while (true) {
 						clientSocket = serverSocket.accept();
-						clientProcessingPool.submit(new ClientTask(clientSocket));
+						clientProcessingPool.submit(new ClientTask());
 					}
 				} catch (IOException e) {
 					System.err.println("Unable to process client request");
@@ -45,17 +65,12 @@ public class Server {
 	}
 
 	private class ClientTask implements Runnable {
-		private final Socket clientSocket;
-
-		public ClientTask(Socket clientSocket) {
-			this.clientSocket = clientSocket;
-		}
 
 		@Override
 		public void run() {
 			System.out.println("Got a client !");
-
-            // Do whatever required to process the client's request
+			clientList.add(clientSocket);
+			
 			
 			try {
 				clientSocket.close();
@@ -65,4 +80,23 @@ public class Server {
 
 		}
 	}
+	
+	public void stopServer() {
+		
+		if (this.serverSocket != null) {
+			try {
+				if (this.input != null)
+					this.input.close();
+				if (this.output != null)
+					this.output.close();
+				if (this.clientSocket != null)
+					this.clientSocket.close();
+				this.serverSocket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
 }
